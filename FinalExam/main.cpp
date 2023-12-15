@@ -1,6 +1,7 @@
 #include <Windows.h>
 
 #include "MemorySystem.h"
+#include "HeapManagerUnitTest.h"
 
 #include <assert.h>
 #include <algorithm>
@@ -16,6 +17,13 @@ bool MemorySystem_UnitTest();
 
 int main(int i_arg, char **)
 {
+	bool heapPassed = HeapManager_UnitTest();
+	if (heapPassed)
+		printf("heap passed\n");
+	else
+		printf("heap FAILED\n");
+
+
 	const size_t 		sizeHeap = 1024 * 1024;
 
 	// you may not need this if you don't use a descriptor pool
