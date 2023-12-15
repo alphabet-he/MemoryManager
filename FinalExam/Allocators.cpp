@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+/*
 void* __cdecl malloc(size_t i_size)
 {
 	// replace with calls to your HeapManager or FixedSizeAllocators
@@ -46,3 +47,4 @@ void operator delete [](void* i_ptr)
 	printf("delete [] 0x%" PRIXPTR "\n", reinterpret_cast<uintptr_t>(i_ptr));
 	//return _aligned_free(i_ptr);
 }
+*/

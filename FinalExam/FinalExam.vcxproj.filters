@@ -21,6 +21,9 @@
     <ClInclude Include="FixedSizeAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OriginalHeap\HeapManagerUnitTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="HeapManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -31,9 +34,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WriteMemory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HeapManagerUnitTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -53,13 +53,13 @@
     <ClCompile Include="FixedSizeAllocatorProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OriginalHeap\HeapManagerUnitTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="HeapManagerProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WriteMemory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HeapManagerUnitTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

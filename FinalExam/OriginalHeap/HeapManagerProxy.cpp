@@ -14,14 +14,13 @@ HeapManager* HeapManagerProxy::CreateHeapManager(void* pHeapMemory, size_t sizeH
 	void* baseAddr = AddPtrSize(heapBaseAddr, _BlockHeaderSize);
 
 	// write free memory list
-	writeMBH(heapBaseAddr, (size_t)baseAddr, sizeHeap - _BlockHeaderSize - _HeapManagerSize, (size_t)nullptr, (size_t)nullptr, (size_t)nullptr, (size_t)nullptr, false);
+	writeMBH(heapBaseAddr, (long long)baseAddr, sizeHeap - _BlockHeaderSize - _HeapManagerSize, (long long)nullptr, (long long)nullptr, (long long)nullptr, (long long)nullptr, false);
 	MemoryBlockHeader* FreeList = (MemoryBlockHeader*)heapBaseAddr;
 
 	// write Heap Manager
-	writeHM(pHeapMemory, (size_t)heapBaseAddr, sizeHeap - _HeapManagerSize, (long)numDescriptors, (long long)FreeList);
+	writeHM(pHeapMemory, (long long)heapBaseAddr, sizeHeap - _HeapManagerSize, (long)numDescriptors, (long long)FreeList);
 
 	HeapManager* heapManager = (HeapManager*)pHeapMemory;
-	size_t a = sizeof(HeapManager);
 	return heapManager;
 }
 
@@ -97,9 +96,9 @@ void* HeapManagerProxy::alloc(HeapManager* pHeapManager, size_t sizeAlloc, unsig
 		void* newBlockBaseAddr = AddPtrSize(newHeaderAddr, _BlockHeaderSize);
 		size_t newBlockSize = pFreeBlock->BlockSize - requiredSize - alignUp; // shrink size
 		writeMBH(newHeaderAddr,
-			(size_t)newBlockBaseAddr, newBlockSize,
-			(size_t)pFreeBlock->pNextBlock, (size_t)MinusPtrSize(pFreeBlock->pBaseAddr, _BlockHeaderSize),
-			(size_t)pFreeBlock->pNextFreeBlock, (size_t)pFreeBlock->pPrevFreeBlock,
+			(long long)newBlockBaseAddr, newBlockSize,
+			(long long)pFreeBlock->pNextBlock, (long long)MinusPtrSize(pFreeBlock->pBaseAddr, _BlockHeaderSize),
+			(long long)pFreeBlock->pNextFreeBlock, (long long)pFreeBlock->pPrevFreeBlock,
 			false);
 
 		MemoryBlockHeader* newNextHeader = (MemoryBlockHeader*)newHeaderAddr;
@@ -157,9 +156,9 @@ void* HeapManagerProxy::alloc(HeapManager* pHeapManager, size_t sizeAlloc, unsig
 		void* newNextFreeBlock = pFreeBlock->pNextFreeBlock;
 		void* newPrevFreeBlock = pFreeBlock->pPrevFreeBlock;
 		// write in a new header in the aligned address
-		writeMBH(alignedHeaderAddr, (size_t)alignedBaseAddr, newSize,
-			(size_t)newNextBlock, (size_t)newPrevBlock,
-			(size_t)newNextFreeBlock, (size_t)newPrevFreeBlock, true);
+		writeMBH(alignedHeaderAddr, (long long)alignedBaseAddr, newSize,
+			(long long)newNextBlock, (long long)newPrevBlock,
+			(long long)newNextFreeBlock, (long long)newPrevFreeBlock, true);
 		//if (alignedBaseAddr == (void*)0x012b1c80) {
 		//	int a;
 		//}
@@ -311,22 +310,14 @@ bool HeapManagerProxy::free(HeapManager* pHeapManager, void* pPtr)
 			// if there is no free block previous to the current block
 			else
 			{
-				if (pHeapManager->FreeList) { // there exist a free block, but it is after the current block
-					// the first block in the free list becomes the next free block
-					header->pNextFreeBlock = pHeapManager->FreeList;
-					// connect with the next free block
-					header->pNextFreeBlock->pPrevFreeBlock = header;
-					// the current block becomes the head of free list
-					pHeapManager->FreeList = header;
-					header->used = false;
-					return true;
-				}
-				else { // there is no free block at all, the current block is the only free blcok
-					pHeapManager->FreeList = header;
-					header->used = false;
-					return true;
-				}
-				
+				// the first block in the free list becomes the next free block
+				header->pNextFreeBlock = pHeapManager->FreeList;
+				// connect with the next free block
+				pHeapManager->FreeList->pPrevFreeBlock = header;
+				// the current block becomes the head of free list
+				pHeapManager->FreeList = header;
+				header->used = false;
+				return true;
 			}
 		}
 		

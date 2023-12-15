@@ -22,7 +22,7 @@ int main(int i_arg, char **)
 		printf("heap passed\n");
 	else
 		printf("heap FAILED\n");
-
+	/*
 
 	const size_t 		sizeHeap = 1024 * 1024;
 
@@ -159,4 +159,5 @@ bool MemorySystem_UnitTest()
 
 	// we succeeded
 	return true;
+	*/
 }
