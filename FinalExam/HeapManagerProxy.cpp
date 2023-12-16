@@ -14,7 +14,7 @@ HeapManager* HeapManagerProxy::CreateHeapManager(void* pHeapMemory, size_t sizeH
 	void* baseAddr = AddPtrSize(heapBaseAddr, _BlockHeaderSize);
 
 	// write free memory list
-	writeMBH(heapBaseAddr, (size_t)baseAddr, sizeHeap - _BlockHeaderSize - _HeapManagerSize, (size_t)nullptr, (size_t)nullptr, (size_t)nullptr, (size_t)nullptr, false);
+	writeMBH(heapBaseAddr, (size_t)baseAddr, sizeHeap - _BlockHeaderSize - _HeapManagerSize, (size_t)nullptr, (size_t)nullptr, (size_t)nullptr, (size_t)nullptr, false, false);
 	MemoryBlockHeader* FreeList = (MemoryBlockHeader*)heapBaseAddr;
 
 	// write Heap Manager
@@ -100,7 +100,7 @@ void* HeapManagerProxy::alloc(HeapManager* pHeapManager, size_t sizeAlloc, unsig
 			(size_t)newBlockBaseAddr, newBlockSize,
 			(size_t)pFreeBlock->pNextBlock, (size_t)MinusPtrSize(pFreeBlock->pBaseAddr, _BlockHeaderSize),
 			(size_t)pFreeBlock->pNextFreeBlock, (size_t)pFreeBlock->pPrevFreeBlock,
-			false);
+			false, false);
 
 		MemoryBlockHeader* newNextHeader = (MemoryBlockHeader*)newHeaderAddr;
 
@@ -159,7 +159,7 @@ void* HeapManagerProxy::alloc(HeapManager* pHeapManager, size_t sizeAlloc, unsig
 		// write in a new header in the aligned address
 		writeMBH(alignedHeaderAddr, (size_t)alignedBaseAddr, newSize,
 			(size_t)newNextBlock, (size_t)newPrevBlock,
-			(size_t)newNextFreeBlock, (size_t)newPrevFreeBlock, true);
+			(size_t)newNextFreeBlock, (size_t)newPrevFreeBlock, true, false);
 		//if (alignedBaseAddr == (void*)0x012b1c80) {
 		//	int a;
 		//}
@@ -344,6 +344,17 @@ void HeapManagerProxy::ShowFreeBlocks(HeapManager* pHeapManager)
 
 void HeapManagerProxy::ShowOutstandingAllocations(HeapManager* pHeapManager)
 {
+}
+
+FixedSizeAllocator* HeapManagerProxy::CreateFixedSizeAllocator(HeapManager* pHeapManager, unsigned int fixedSize, unsigned int blockNum)
+{
+	assert(blockNum % 8 == 0);
+	// Size of FSA = FSA header + bitArray + user memory space
+	size_t requiredSize = sizeof(FixedSizeAllocator) + blockNum / 8 + blockNum * fixedSize;
+	void* writingAddr = HeapManagerProxy::alloc(pHeapManager, (size_t)requiredSize);
+	void* baseAddr = AddPtrSize(writingAddr, sizeof(FixedSizeAllocator));
+	writeFSA(writingAddr, baseAddr, fixedSize, blockNum);
+	return (FixedSizeAllocator*)baseAddr;
 }
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "HeapManager.h"
+#include "FixedSizeAllocator.h"
 
 namespace HeapManagerProxy {
 
@@ -22,6 +23,8 @@ namespace HeapManagerProxy {
 	void ShowFreeBlocks(HeapManager* pHeapManager);
 
 	void ShowOutstandingAllocations(HeapManager* pHeapManager);
+
+	FixedSizeAllocator* CreateFixedSizeAllocator(HeapManager* pHeapManager, unsigned int fixedSize, unsigned int blockNum);
 
 }
 

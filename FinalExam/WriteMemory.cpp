@@ -1,9 +1,5 @@
 #include "WriteMemory.h"
 
-const int _byteSize = sizeof(bool);
-const int _longlongSize = sizeof(long long);
-const int _longSize = sizeof(long);
-
 
 /*
 void writeByte(long long baseAddr, unsigned char data)//8b-1B
@@ -91,7 +87,7 @@ void writeMBH(void* writingAddr,
 	size_t baseAddr, size_t blockSize,
 	size_t nextAddr, size_t prevAddr,
 	size_t nextFreeAddr, size_t prevFreeAddr,
-	bool usedFlag)
+	bool usedFlag, bool fixedSizedFlag)
 {
 	writeSizeT((size_t)writingAddr, baseAddr);
 	writeSizeT((size_t)writingAddr + sizeof(size_t), blockSize);
@@ -100,7 +96,7 @@ void writeMBH(void* writingAddr,
 	writeSizeT((size_t)writingAddr + sizeof(size_t) * 4, nextFreeAddr);
 	writeSizeT((size_t)writingAddr + sizeof(size_t) * 5, prevFreeAddr);
 	writeByte((size_t)writingAddr + sizeof(size_t) * 6, usedFlag);
-	//writeByte((size_t)writingAddr + sizeof(size_t) * 6 + _byteSize, fixedSizedFlag);
+	writeByte((size_t)writingAddr + sizeof(size_t) * 6 + _byteSize, fixedSizedFlag);
 };
 
 
@@ -111,4 +107,12 @@ void writeHM(void* writingAddr, size_t _pHeapMemory,
 	writeSizeT((size_t)writingAddr + sizeof(size_t) * 2, FreeListAddr);
 	writeDWord((size_t)writingAddr + sizeof(size_t) * 3, _numDescriptors);
 	
-};
+}
+
+
+void writeFSA(void* writingAddr, void* baseAddr, unsigned int fixedSize, unsigned int blockNum)
+{
+	writeSizeT((size_t)writingAddr, (size_t)baseAddr);
+	writeDWord((size_t)writingAddr + sizeof(size_t), fixedSize);
+	writeDWord((size_t)writingAddr + sizeof(size_t) + _longSize, blockNum);
+}

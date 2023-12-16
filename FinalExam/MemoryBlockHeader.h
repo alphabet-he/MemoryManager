@@ -9,7 +9,7 @@ struct MemoryBlockHeader
 	struct MemoryBlockHeader* pNextFreeBlock;
 	struct MemoryBlockHeader* pPrevFreeBlock;
 	bool used;
-	//bool fixedSized; // is fixed size allocator or not
+	bool fixedSized; // is fixed size allocator or not
 };
 
 const size_t _BlockHeaderSize = sizeof(MemoryBlockHeader);

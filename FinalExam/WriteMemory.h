@@ -1,6 +1,9 @@
 #pragma once
 #include <cstdint>
 
+const int _byteSize = sizeof(bool);
+const int _longlongSize = sizeof(long long);
+const int _longSize = sizeof(long);
 
 
 void writeByte(const size_t baseAddr, const unsigned char data);//8b-1B
@@ -15,11 +18,12 @@ void writeMBH(void* writingAddr,
 	size_t baseAddr, size_t blockSize,
 	size_t nextAddr, size_t prevAddr,
 	size_t nextFreeAddr, size_t prevFreeAddr,
-	bool usedFlag);
+	bool usedFlag, bool fixedSizedFlag);
 
 void writeHM(void* writingAddr, size_t _pHeapMemory,
 	size_t _sizeHeap, unsigned long _numDescriptors, size_t FreeListAddr);
 
+void writeFSA(void* writingAddr, void* baseAddr, unsigned int fixedSize, unsigned int blockNum);
 
 /*
 
