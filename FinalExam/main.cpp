@@ -45,7 +45,7 @@ void SetFifthBit(unsigned char* baseAddress, unsigned long ind) {
 
 int main(int i_arg, char **)
 {
-
+	/*
 	// Example: Allocate memory for two bytes
 	unsigned char* memory = new unsigned char[4];
 
@@ -89,9 +89,9 @@ int main(int i_arg, char **)
 	else
 		printf("heap FAILED\n");
 
-	
+	*/
 
-	/*
+	
 
 	const size_t 		sizeHeap = 1024 * 1024;
 
@@ -228,5 +228,5 @@ bool MemorySystem_UnitTest()
 
 	// we succeeded
 	return true;
-	*/
+	
 }

@@ -37,7 +37,7 @@ void* HeapManagerProxy::alloc(HeapManager* pHeapManager, size_t sizeAlloc, unsig
 
 	// it's not even possible to put in such a huge thing
 	if (requiredSize > pHeapManager->sizeHeap) {
-		return NULL;
+		return nullptr;
 	}
 
 	MemoryBlockHeader* pFreeBlock = pHeapManager->FreeList;
@@ -349,12 +349,22 @@ void HeapManagerProxy::ShowOutstandingAllocations(HeapManager* pHeapManager)
 FixedSizeAllocator* HeapManagerProxy::CreateFixedSizeAllocator(HeapManager* pHeapManager, unsigned int fixedSize, unsigned int blockNum)
 {
 	assert(blockNum % 8 == 0);
+	
 	// Size of FSA = FSA header + bitArray + user memory space
 	size_t requiredSize = sizeof(FixedSizeAllocator) + blockNum / 8 + blockNum * fixedSize;
 	void* writingAddr = HeapManagerProxy::alloc(pHeapManager, (size_t)requiredSize);
-	void* baseAddr = AddPtrSize(writingAddr, sizeof(FixedSizeAllocator));
-	writeFSA(writingAddr, baseAddr, fixedSize, blockNum);
-	return (FixedSizeAllocator*)baseAddr;
+	
+	// if there is enough space to create an FSA
+	if (writingAddr) {
+		void* baseAddr = AddPtrSize(writingAddr, sizeof(FixedSizeAllocator));
+		writeFSA(writingAddr, baseAddr, fixedSize, blockNum);
+		return (FixedSizeAllocator*)baseAddr;
+	}
+	else
+	{
+		return nullptr;
+	}
+	
 }
 
 

@@ -3,7 +3,7 @@ class FixedSizeAllocator
 {
 public:
 
-	void* alloc(size_t sizeAlloc);
+	void* alloc();
 
 	bool free(void* ptr);
 
@@ -11,21 +11,26 @@ public:
 
 	~FixedSizeAllocator();
 
-	void ClearAll();
-	void SetAll();
+	void SetAllInUse();
+	void SetAllFree();
 
-	inline bool AreAllBitsClear() const;
-	inline bool AreAllBitsSet() const;
+	// are all blocks used?
+	inline bool AreAllUsed() const;
+	// are all blocks vacant?
+	inline bool AreAllFree() const;
 
-	inline bool IsBitClear(unsigned long ind) const;
+	// 0: cannot use; 1: can use
+	inline bool IsBlockInUse(unsigned long ind) const; 
 
-	inline void SetBit(unsigned long ind);
-	inline void ClearBit(unsigned long ind);
+	inline void SetFree(unsigned long ind);
+	inline void SetInUse(unsigned long ind);
 
-	bool GetFirstClearBit() const;
-	long GetFirstSetBit() const;
+	//bool GetFirstClearBit() const;
+	long GetFirstFreeBlock() const;
 
 	bool operator[](size_t i_index) const;
+
+	inline size_t GetFixedSize() const { return FixedSize; };
 
 
 private:

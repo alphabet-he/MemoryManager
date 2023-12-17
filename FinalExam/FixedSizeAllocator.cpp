@@ -4,14 +4,32 @@
 #include "WriteMemory.h"
 
 
-void* FixedSizeAllocator::alloc(size_t sizeAlloc)
+void* FixedSizeAllocator::alloc()
 {
-    return nullptr;
+    long ind = GetFirstFreeBlock();
+    if (ind < 0) return nullptr;
+    else {
+        SetInUse(ind); // set the flag as cannot use
+        // gap = bitArray + memory blocks before the free block
+        size_t gap = BlockNum / 8 + ind * FixedSize;
+        return AddPtrSize(BaseAddr, gap);
+    }
 }
 
 bool FixedSizeAllocator::free(void* ptr)
 {
-    return false;
+    uintptr_t ptrValue = reinterpret_cast<uintptr_t>(ptr);
+    uintptr_t baseValue = reinterpret_cast<uintptr_t>(BaseAddr);
+
+    unsigned long ind = (ptrValue - baseValue - BlockNum / 8) / FixedSize;
+    if (IsBlockInUse) { // in use now
+        SetFree(ind); // set the bit as 1, can use
+        return true;
+    }
+    else {
+        return false;
+    }
+    
 }
 
 inline bool FixedSizeAllocator::Contains(void* ptr) const
@@ -36,9 +54,10 @@ inline bool FixedSizeAllocator::Contains(void* ptr) const
 
 FixedSizeAllocator::~FixedSizeAllocator()
 {
+    SetAllFree();
 }
 
-void FixedSizeAllocator::ClearAll()
+void FixedSizeAllocator::SetAllInUse()
 {
     int byteNum = BlockNum / 8;
     char* checkingAddr = (char*)BaseAddr;
@@ -48,7 +67,7 @@ void FixedSizeAllocator::ClearAll()
     }
 }
 
-void FixedSizeAllocator::SetAll()
+void FixedSizeAllocator::SetAllFree()
 {
     int byteNum = BlockNum / 8;
     char* checkingAddr = (char*)BaseAddr;
@@ -58,7 +77,7 @@ void FixedSizeAllocator::SetAll()
     }
 }
 
-inline bool FixedSizeAllocator::AreAllBitsClear() const
+inline bool FixedSizeAllocator::AreAllUsed() const
 {
     int byteNum = BlockNum / 8;
     char* checkingAddr = (char*)BaseAddr;
@@ -69,7 +88,7 @@ inline bool FixedSizeAllocator::AreAllBitsClear() const
     return true;
 }
 
-inline bool FixedSizeAllocator::AreAllBitsSet() const
+inline bool FixedSizeAllocator::AreAllFree() const
 {
     int byteNum = BlockNum / 8;
     char* checkingAddr = (char*)BaseAddr;
@@ -80,7 +99,7 @@ inline bool FixedSizeAllocator::AreAllBitsSet() const
     return true;
 }
 
-inline bool FixedSizeAllocator::IsBitClear(unsigned long ind) const
+inline bool FixedSizeAllocator::IsBlockInUse(unsigned long ind) const
 {
     assert(ind >= 0);
     // Calculate the byte offset and bit position within the byte
@@ -97,7 +116,8 @@ inline bool FixedSizeAllocator::IsBitClear(unsigned long ind) const
     return(masked == 0);
 }
 
-inline void FixedSizeAllocator::SetBit(unsigned long ind)
+// can use
+inline void FixedSizeAllocator::SetFree(unsigned long ind)
 {
     assert(ind >= 0);
     // Calculate the byte offset and bit position within the byte
@@ -109,7 +129,8 @@ inline void FixedSizeAllocator::SetBit(unsigned long ind)
     base[byteOffset] |= (1 << (7 - bitPosInByte));
 }
 
-inline void FixedSizeAllocator::ClearBit(unsigned long ind)
+// cannot use
+inline void FixedSizeAllocator::SetInUse(unsigned long ind)
 {
     assert(ind >= 0);
     // Calculate the byte offset and bit position within the byte
@@ -125,12 +146,12 @@ inline void FixedSizeAllocator::ClearBit(unsigned long ind)
     base[byteOffset] &= mask;
 }
 
-bool FixedSizeAllocator::GetFirstClearBit() const
-{
-    return false;
-}
+//bool FixedSizeAllocator::GetFirstClearBit() const
+//{
+//    return false;
+//}
 
- long FixedSizeAllocator::GetFirstSetBit() const
+ long FixedSizeAllocator::GetFirstFreeBlock() const
 {
     // during the creation, assertion guaranteed that blockNum % 8 == 0;
     int byteNum = BlockNum / 8;
