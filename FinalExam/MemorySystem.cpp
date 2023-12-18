@@ -1,6 +1,8 @@
 #include "MemorySystem.h"
 #include <cassert>
 
+HeapManager* p_HeapManager = nullptr;
+
 bool InitializeMemorySystem(void * i_pHeapMemory, size_t i_sizeHeapMemory, unsigned int i_OptionalNumDescriptors)
 {
 	// create your HeapManager and FixedSizeAllocators

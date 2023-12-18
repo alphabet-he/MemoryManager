@@ -22,7 +22,7 @@ bool FixedSizeAllocator::free(void* ptr)
     uintptr_t baseValue = reinterpret_cast<uintptr_t>(BaseAddr);
 
     unsigned long ind = (ptrValue - baseValue - BlockNum / 8) / FixedSize;
-    if (IsBlockInUse) { // in use now
+    if (IsBlockInUse(ind)) { // in use now
         SetFree(ind); // set the bit as 1, can use
         return true;
     }
@@ -32,7 +32,7 @@ bool FixedSizeAllocator::free(void* ptr)
     
 }
 
-inline bool FixedSizeAllocator::Contains(void* ptr) const
+bool FixedSizeAllocator::Contains(void* ptr) const
 {
     // the leftmost address of user memory space (after bitArray)
     void* minAddr = AddPtrSize(BaseAddr, BlockNum / 8);
@@ -64,6 +64,7 @@ void FixedSizeAllocator::SetAllInUse()
 
     for (int i = 0; i < byteNum; i++) {
         *checkingAddr = 0;
+        checkingAddr++;
     }
 }
 
@@ -73,33 +74,36 @@ void FixedSizeAllocator::SetAllFree()
     char* checkingAddr = (char*)BaseAddr;
 
     for (int i = 0; i < byteNum; i++) {
-        *checkingAddr = 0xFF;
+        *checkingAddr = (char)0xFF;
+        checkingAddr++;
     }
 }
 
-inline bool FixedSizeAllocator::AreAllUsed() const
+bool FixedSizeAllocator::AreAllUsed() const
 {
     int byteNum = BlockNum / 8;
     char* checkingAddr = (char*)BaseAddr;
 
     for (int i = 0; i < byteNum; i++) {
         if (*checkingAddr != 0) return false;
+        checkingAddr++;
     }
     return true;
 }
 
-inline bool FixedSizeAllocator::AreAllFree() const
+bool FixedSizeAllocator::AreAllFree() const
 {
     int byteNum = BlockNum / 8;
     char* checkingAddr = (char*)BaseAddr;
 
     for (int i = 0; i < byteNum; i++) {
         if (*checkingAddr != 0xFF) return false;
+        checkingAddr++;
     }
     return true;
 }
 
-inline bool FixedSizeAllocator::IsBlockInUse(unsigned long ind) const
+bool FixedSizeAllocator::IsBlockInUse(unsigned long ind) const
 {
     assert(ind >= 0);
     // Calculate the byte offset and bit position within the byte
@@ -117,7 +121,7 @@ inline bool FixedSizeAllocator::IsBlockInUse(unsigned long ind) const
 }
 
 // can use
-inline void FixedSizeAllocator::SetFree(unsigned long ind)
+void FixedSizeAllocator::SetFree(unsigned long ind)
 {
     assert(ind >= 0);
     // Calculate the byte offset and bit position within the byte
@@ -130,7 +134,7 @@ inline void FixedSizeAllocator::SetFree(unsigned long ind)
 }
 
 // cannot use
-inline void FixedSizeAllocator::SetInUse(unsigned long ind)
+void FixedSizeAllocator::SetInUse(unsigned long ind)
 {
     assert(ind >= 0);
     // Calculate the byte offset and bit position within the byte
@@ -160,7 +164,8 @@ inline void FixedSizeAllocator::SetInUse(unsigned long ind)
         // there exist a set bit
         if (*checkingAddr != 0) {
             unsigned long index; // This variable will store the position of the first set bit
-            if (_BitScanReverse(&index, *checkingAddr)) {
+            unsigned long maskedValue = (unsigned long)(*checkingAddr) & 0x000000FF; // Mask the byte
+            if (_BitScanReverse(&index, maskedValue)) {
                 int leftInd = 8 - static_cast<int>(index); // the position of a set bit from left
                 return i * 8 + leftInd - 1;
             }

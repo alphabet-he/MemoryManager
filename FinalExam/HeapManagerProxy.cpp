@@ -354,11 +354,18 @@ FixedSizeAllocator* HeapManagerProxy::CreateFixedSizeAllocator(HeapManager* pHea
 	size_t requiredSize = sizeof(FixedSizeAllocator) + blockNum / 8 + blockNum * fixedSize;
 	void* writingAddr = HeapManagerProxy::alloc(pHeapManager, (size_t)requiredSize);
 	
+	// mark it as fixed sized
+	MemoryBlockHeader* MBH = (MemoryBlockHeader*)MinusPtrSize(writingAddr, sizeof(MemoryBlockHeader));
+	MBH->fixedSized = true;
+
 	// if there is enough space to create an FSA
 	if (writingAddr) {
 		void* baseAddr = AddPtrSize(writingAddr, sizeof(FixedSizeAllocator));
 		writeFSA(writingAddr, baseAddr, fixedSize, blockNum);
-		return (FixedSizeAllocator*)baseAddr;
+		// Set FSA as all free
+		FixedSizeAllocator* FSA = (FixedSizeAllocator*)writingAddr;
+		FSA->SetAllFree();
+		return FSA;
 	}
 	else
 	{

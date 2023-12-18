@@ -7,7 +7,7 @@ public:
 
 	bool free(void* ptr);
 
-	inline bool Contains(void* ptr) const;
+	bool Contains(void* ptr) const;
 
 	~FixedSizeAllocator();
 
@@ -15,15 +15,15 @@ public:
 	void SetAllFree();
 
 	// are all blocks used?
-	inline bool AreAllUsed() const;
+	bool AreAllUsed() const;
 	// are all blocks vacant?
-	inline bool AreAllFree() const;
+	bool AreAllFree() const;
 
 	// 0: cannot use; 1: can use
-	inline bool IsBlockInUse(unsigned long ind) const; 
+	bool IsBlockInUse(unsigned long ind) const; 
 
-	inline void SetFree(unsigned long ind);
-	inline void SetInUse(unsigned long ind);
+	void SetFree(unsigned long ind);
+	void SetInUse(unsigned long ind);
 
 	//bool GetFirstClearBit() const;
 	long GetFirstFreeBlock() const;

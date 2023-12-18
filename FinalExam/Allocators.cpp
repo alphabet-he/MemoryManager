@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "MemorySystem.h"
 #include "HeapManagerProxy.h"
+#include "FixedSizeAllocator.h"
 
 void* __cdecl malloc(size_t i_size)
 {
@@ -25,6 +26,7 @@ void* __cdecl malloc(size_t i_size)
 			if (FixedSizes[i] >= i_size) 
 			{
 				targetSize = FixedSizes[i];
+				break;
 			}
 		}
 
@@ -34,6 +36,7 @@ void* __cdecl malloc(size_t i_size)
 			if (currBlock->fixedSized) {
 				FixedSizeAllocator* FSA = (FixedSizeAllocator*)(currBlock->pBaseAddr);
 				if (FSA->GetFixedSize() == targetSize && !FSA->AreAllUsed()) break;
+				currBlock = currBlock->pNextBlock;
 			}
 		}
 
@@ -68,6 +71,21 @@ void __cdecl free(void* i_ptr)
 {
 	// replace with calls to your HeapManager or FixedSizeAllocators
 	printf("free 0x%" PRIXPTR "\n", reinterpret_cast<uintptr_t>(i_ptr));
+
+	// traverse FSAs to determine the one that allocates i_ptr
+	MemoryBlockHeader* currBlock = (MemoryBlockHeader*)(p_HeapManager->pHeapMemory);
+	while (currBlock) {
+		if (currBlock->fixedSized) {
+			FixedSizeAllocator* FSA = (FixedSizeAllocator*)(currBlock->pBaseAddr);
+			if (FSA->Contains(i_ptr)) {
+				FSA->free(i_ptr);
+				return;
+			}
+		}
+		currBlock = currBlock->pNextBlock;
+	}
+	HeapManagerProxy::free(p_HeapManager, i_ptr);
+	return;
 	//return _aligned_free(i_ptr);
 }
 
@@ -75,7 +93,7 @@ void* operator new(size_t i_size)
 {
 	// replace with calls to your HeapManager or FixedSizeAllocators
 	printf("new %zu\n", i_size);
-	return nullptr;
+	return malloc(i_size);
 	//return _aligned_malloc(i_size, 4);
 }
 
@@ -83,6 +101,7 @@ void operator delete(void* i_ptr)
 {
 	// replace with calls to your HeapManager or FixedSizeAllocators
 	printf("delete 0x%" PRIXPTR "\n", reinterpret_cast<uintptr_t>(i_ptr));
+	return free(i_ptr);
 	//return _aligned_free(i_ptr);
 }
 
@@ -90,7 +109,7 @@ void* operator new[](size_t i_size)
 {
 	// replace with calls to your HeapManager or FixedSizeAllocators
 	printf("new [] %zu\n", i_size);
-	return nullptr;
+	return malloc(i_size);
 	//return _aligned_malloc(i_size, 4);
 }
 
@@ -98,5 +117,6 @@ void operator delete [](void* i_ptr)
 {
 	// replace with calls to your HeapManager or FixedSizeAllocators
 	printf("delete [] 0x%" PRIXPTR "\n", reinterpret_cast<uintptr_t>(i_ptr));
+	return free(i_ptr);
 	//return _aligned_free(i_ptr);
 }
