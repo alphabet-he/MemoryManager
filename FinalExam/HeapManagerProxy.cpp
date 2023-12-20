@@ -336,6 +336,13 @@ bool HeapManagerProxy::free(HeapManager* pHeapManager, void* pPtr)
 
 void HeapManagerProxy::Destroy(HeapManager* pHeapManager)
 {
+	// mark the whole heap as an unused memory block
+	MemoryBlockHeader* beginBlock = (MemoryBlockHeader*)(pHeapManager->pHeapMemory);
+	beginBlock->BlockSize = pHeapManager->sizeHeap;
+	beginBlock->pNextBlock = nullptr;
+	beginBlock->pNextFreeBlock = nullptr;
+	beginBlock->used = false;
+	beginBlock->fixedSized = false;
 }
 
 void HeapManagerProxy::ShowFreeBlocks(HeapManager* pHeapManager)

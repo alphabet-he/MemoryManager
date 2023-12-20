@@ -43,7 +43,8 @@ void Collect()
 void DestroyMemorySystem()
 {
 	// Destroy your HeapManager and FixedSizeAllocators
-
+	HeapManagerProxy::Destroy(p_HeapManager);
+	p_HeapManager = nullptr;
 }
 
 FixedSizeAllocator* ExpandFixedSizeAllocator(unsigned long fixedSize)

@@ -229,9 +229,9 @@ bool MemorySystem_UnitTest()
 	}
 
 	// this new [] / delete [] pair should run through your allocator
-	//char * pNewTest = new char[1024];
+	char * pNewTest = new char[1024];
 	
-	//delete[] pNewTest;
+	delete[] pNewTest;
 
 	// we succeeded
 	return true;

@@ -21,7 +21,7 @@ void* __cdecl malloc(size_t i_size)
 	else {
 		
 		// find out what size it belongs
-		size_t targetSize;
+		size_t targetSize = 0;
 		for (int i = 0; i < FSACount; i++)
 		{
 			if (FixedSizes[i] >= i_size) 
