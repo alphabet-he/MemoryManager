@@ -18,8 +18,8 @@ bool InitializeMemorySystem(void * i_pHeapMemory, size_t i_sizeHeapMemory, unsig
 	for (int i = 0; i < FSACount; i++) {
 
 		// ideal size and block nums
-		size_t FSAsize = i_sizeHeapMemory * FixedSizedRatio * SizeRatios[i];
-		unsigned long blockNum = FSAsize / FixedSizes[i];
+		size_t FSAsize = (unsigned long)(i_sizeHeapMemory * FixedSizedRatio * SizeRatios[i]);
+		unsigned long blockNum = (unsigned long)(FSAsize / FixedSizes[i]);
 
 		// make sure the block num is multiply of 8
 		blockNum = blockNum - blockNum % 8;
@@ -61,8 +61,8 @@ FixedSizeAllocator* ExpandFixedSizeAllocator(unsigned long fixedSize)
 	if (ind < 0) return nullptr;
 
 	// ideal size and block nums
-	size_t FSAsize = p_HeapManager->sizeHeap * FixedSizedRatio * SizeRatios[ind];
-	unsigned long blockNum = FSAsize / fixedSize;
+	size_t FSAsize = (unsigned long)(p_HeapManager->sizeHeap * FixedSizedRatio * SizeRatios[ind]);
+	unsigned long blockNum = (unsigned long)(FSAsize / fixedSize);
 
 	// make sure the block num is multiply of 8
 	blockNum = blockNum - blockNum % 8;

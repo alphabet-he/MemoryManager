@@ -353,7 +353,7 @@ void HeapManagerProxy::ShowOutstandingAllocations(HeapManager* pHeapManager)
 {
 }
 
-FixedSizeAllocator* HeapManagerProxy::CreateFixedSizeAllocator(HeapManager* pHeapManager, unsigned int fixedSize, unsigned int blockNum)
+FixedSizeAllocator* HeapManagerProxy::CreateFixedSizeAllocator(HeapManager* pHeapManager, unsigned long fixedSize, unsigned int blockNum)
 {
 	assert(blockNum % 8 == 0);
 	

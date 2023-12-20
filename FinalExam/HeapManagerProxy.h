@@ -24,7 +24,7 @@ namespace HeapManagerProxy {
 
 	void ShowOutstandingAllocations(HeapManager* pHeapManager);
 
-	FixedSizeAllocator* CreateFixedSizeAllocator(HeapManager* pHeapManager, unsigned int fixedSize, unsigned int blockNum);
+	FixedSizeAllocator* CreateFixedSizeAllocator(HeapManager* pHeapManager, unsigned long fixedSize, unsigned int blockNum);
 
 }
 

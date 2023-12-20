@@ -5,7 +5,7 @@
 // params of the memory system
 extern HeapManager* p_HeapManager;
 const static float FixedSizedRatio = 0.4f;
-const static size_t FixedSizes[] = { 16, 32, 64, 128, 196, 256 };
+const static unsigned long FixedSizes[] = { 16, 32, 64, 128, 196, 256 };
 const static float SizeRatios[] = {0.0085f, 0.0068f, 0.063f, 0.275f, 0.298f, 0.190f, 0.157f};
 
 // InitializeMemorySystem - initialize your memory system including your HeapManager and some FixedSizeAllocators
