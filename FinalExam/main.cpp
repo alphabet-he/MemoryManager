@@ -105,6 +105,9 @@ int main(int i_arg, char **)
 	// Create your HeapManager and FixedSizeAllocators.
 	InitializeMemorySystem(pHeapMemory, sizeHeap, numDescriptors);
 
+	void* a = malloc(sizeof(int));
+	free(a);
+
 	bool success = MemorySystem_UnitTest();
 	if (success)
 		printf("test passed\n");

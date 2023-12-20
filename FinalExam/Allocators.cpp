@@ -1,5 +1,6 @@
 #include <inttypes.h>
 #include <stdio.h>
+#include <malloc.h>
 #include "MemorySystem.h"
 #include "HeapManagerProxy.h"
 #include "FixedSizeAllocator.h"
