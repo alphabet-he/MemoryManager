@@ -220,4 +220,4 @@ I used bitwise operators and ```_BitScanReverse()``` to operate on the bits.
 }
 ```
 
-*I wanted to scan 8 bits - 1 byte once a time, because I think it won't be efficient if I scan more bits, such as 32b once a time. However,  ```_BitScanReverse()``` seems to always interprate its argument as ```int32``` insted of a byte. I had to mask my byte and cast it into ```int32```. I knew this is smelly codes, but since the assignment asks to use ```_BitScanReverse()```, I wrote it in this way.*
+*I wanted to scan 8 bits - 1 byte once a time, because I think it won't be efficient if I scan more bits, such as 32b once a time. However,  ```_BitScanReverse()``` seems to always interprate its argument as ```int32``` insted of a byte. I had to mask my byte and cast it into ```int32```, since the assignment asks to use ```_BitScanReverse()```.*
