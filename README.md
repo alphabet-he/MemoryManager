@@ -1,5 +1,7 @@
-# Final Exam Submission
-## Junxuan Hu &emsp; u1481419
+# Memory Manager
+## Junxuan Hu 
+
+The project is a simple memory manager system using both fixed sized memory manager and dynamic heap manager. 
 
 This document will explain some unique feature in the program.
 
